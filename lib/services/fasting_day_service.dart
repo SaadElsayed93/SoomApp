@@ -1,52 +1,37 @@
-import 'package:intl/intl.dart';
-import 'package:hijri/hijri_calendar.dart';
+import 'package:flutter/material.dart';
 import '../models/fasting_day.dart';
-import 'fasting_calculator.dart';
 
 class FastingDayService {
-  Future<List<FastingDay>> generateFastingDays(int year) async {
-    List<FastingDay> days = [];
-    final start = DateTime(year, 1, 1);
-    final end = DateTime(year, 12, 31);
-    final formatter = DateFormat('yyyy-MM-dd');
-
-    DateTime current = start;
-    while (current.isBefore(end) || current.isAtSameMomentAs(end)) {
-      final type = FastingCalculator.getFastingType(current);
-      if (type != FastingType.none) {
-        final hijri = HijriCalendar.fromDate(current);
-        days.add(
-          FastingDay(
-            date: current,
-            nameAr: _getName(day: hijri, type: type, weekday: current.weekday),
-            hijriDate: "${hijri.hDay} ${hijri.longMonthName} ${hijri.hYear}",
-            gregorianDate: formatter.format(current),
-            type: type,
-          ),
-        );
-      }
-      current = current.add(const Duration(days: 1));
+  /// دالة ترجع نوع اليوم (مستحب / منهي / عادي)
+  static FastingType classifyDay(DateTime date) {
+    // الاثنين والخميس مستحب
+    if (date.weekday == DateTime.monday || date.weekday == DateTime.thursday) {
+      return FastingType.recommended;
     }
-    return days;
+
+    // الجمعة منفردة منهي عنها
+    if (date.weekday == DateTime.friday) {
+      return FastingType.forbidden;
+    }
+
+    // TODO: تقدر تضيف هنا الأيام الخاصة زي عاشوراء، عرفة، الأيام البيض... الخ
+    // مثال:
+    // if (isArafa(date)) return FastingType.recommended;
+
+    return FastingType.normal;
   }
 
-  String _getName({
-    required HijriCalendar day,
-    required FastingType type,
-    required int weekday,
-  }) {
-    if (type == FastingType.recommended) {
-      if (day.hDay == 10 && day.hMonth == 1) return "يوم عاشوراء";
-      if (day.hDay == 9 && day.hMonth == 12) return "يوم عرفة";
-      if ([13, 14, 15].contains(day.hDay)) return "أيام البيض";
-      if (weekday == DateTime.monday) return "الاثنين";
-      if (weekday == DateTime.thursday) return "الخميس";
-    } else if (type == FastingType.forbidden) {
-      if (day.hDay == 1 && day.hMonth == 10) return "عيد الفطر";
-      if (day.hDay == 10 && day.hMonth == 12) return "عيد الأضحى";
-      if (day.hMonth == 12 && [11, 12, 13].contains(day.hDay))
-        return "أيام التشريق";
-    }
-    return "يوم";
+  /// دالة تجيب الأسبوع كله (من الاثنين → الأحد مثلاً)
+  static List<FastingDay> getWeekDays(DateTime start) {
+    return List.generate(7, (i) {
+      final date = start.add(Duration(days: i));
+      return FastingDay(date: date, type: classifyDay(date));
+    });
+  }
+
+  /// مثال لدالة تحدد يوم عرفة
+  static bool isArafa(DateTime date) {
+    // يوم 9 ذو الحجة (مش متحقق 100% بدون مكتبة هجري دقيقة)
+    return date.day == 9 && date.month == 6; // مؤقت بس
   }
 }

@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'screens/home_screen.dart';
 
-void main() {
-  runApp(const FastingReminderApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('ar', null);
+  runApp(const FastingApp());
 }
 
-class FastingReminderApp extends StatelessWidget {
-  const FastingReminderApp({super.key});
+class FastingApp extends StatelessWidget {
+  const FastingApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "تذكير بالصيام",
-      theme: ThemeData(
-        primarySwatch: Colors.teal,
-        fontFamily: "Roboto",
-      ),
-      debugShowCheckedModeBanner: false,
+      title: "تطبيق الصيام",
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: const HomeScreen(),
     );
   }
