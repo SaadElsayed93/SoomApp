@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/fasting_day.dart';
-import '../widgets/fasting_day_card.dart';
 import '../services/fasting_day_service.dart';
+import '../widgets/fasting_day_card.dart';
+import '../widgets/week_navigator.dart';
+import '../core/theme/app_colors.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,72 +13,61 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  DateTime selectedWeekStart = DateTime.now();
+  final FastingDayService _service = FastingDayService();
+  late DateTime _startOfWeek;
 
   @override
   void initState() {
     super.initState();
-    selectedWeekStart = DateTime.now()
-        .subtract(Duration(days: DateTime.now().weekday - 1));
+    _startOfWeek = _service.getStartOfCurrentWeek();
+  }
+
+  void _goToPreviousWeek() {
+    setState(() {
+      _startOfWeek = _startOfWeek.subtract(const Duration(days: 7));
+    });
+  }
+
+  void _goToNextWeek() {
+    setState(() {
+      _startOfWeek = _startOfWeek.add(const Duration(days: 7));
+    });
+  }
+
+  void _goToCurrentWeek() {
+    setState(() {
+      _startOfWeek = _service.getStartOfCurrentWeek();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final days = FastingDayService.getWeekDays(selectedWeekStart);
-    final today = DateTime.now();
+    final days = _service.getWeekDays(_startOfWeek);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("أيام الصيام")),
+      appBar: AppBar(
+        title: const Text("أيام الصيام"),
+        backgroundColor: AppColors.primary,
+        centerTitle: true,
+      ),
       body: Column(
         children: [
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: days.length,
-              itemBuilder: (context, i) {
-                final isToday = days[i].date.day == today.day &&
-                    days[i].date.month == today.month &&
-                    days[i].date.year == today.year;
-                return FastingDayCard(day: days[i], isToday: isToday);
+              itemBuilder: (context, index) {
+                return FastingDayCard(day: days[index]);
               },
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      selectedWeekStart =
-                          selectedWeekStart.subtract(const Duration(days: 7));
-                    });
-                  },
-                  child: const Text("الأسبوع السابق"),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      final now = DateTime.now();
-                      selectedWeekStart =
-                          now.subtract(Duration(days: now.weekday - 1));
-                    });
-                  },
-                  child: const Text("الأسبوع الحالي"),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      selectedWeekStart =
-                          selectedWeekStart.add(const Duration(days: 7));
-                    });
-                  },
-                  child: const Text("الأسبوع القادم"),
-                ),
-              ],
-            ),
-          )
+
+          // ✅ Week Navigator تحت اللي عدلناه
+          WeekNavigator(
+            onPrevious: _goToPreviousWeek,
+            onNext: _goToNextWeek,
+            onCurrent: _goToCurrentWeek,
+          ),
         ],
       ),
     );

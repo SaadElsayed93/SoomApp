@@ -2,52 +2,51 @@ import 'package:intl/intl.dart';
 import 'package:hijri/hijri_calendar.dart';
 
 class DateHelper {
-  static final Map<String, String> _hijriMonthsMap = {
-    "Muharram": "محرم",
-    "Safar": "صفر",
-    "Rabi al-Awwal": "ربيع الأول",
-    "Rabi al-Thani": "ربيع الآخر",
-    "Jumada al-Awwal": "جمادى الأولى",
-    "Jumada al-Thani": "جمادى الآخرة",
-    "Rajab": "رجب",
-    "Shaban": "شعبان",
-    "Ramadan": "رمضان",
-    "Shawwal": "شوال",
-    "Dhul-Qadah": "ذو القعدة",
-    "Dhul-Hijjah": "ذو الحجة",
-  };
-
-  static String getDayName(DateTime date) {
-    const names = {
-      1: "الاثنين",
-      2: "الثلاثاء",
-      3: "الأربعاء",
-      4: "الخميس",
-      5: "الجمعة",
-      6: "السبت",
-      7: "الأحد",
-    };
-    return names[date.weekday] ?? "";
+  static String formatDate(DateTime date) {
+    return DateFormat('d-MM-yyyy').format(date);
   }
 
   static String formatHijri(DateTime date) {
     final hijri = HijriCalendar.fromDate(date);
-    String raw = hijri.toFormat("dd MMMM yyyy");
-    _hijriMonthsMap.forEach((en, ar) {
-      raw = raw.replaceAll(en, ar);
-    });
-    return "$raw هـ";
+    return "${hijri.hDay} ${_getHijriMonthName(hijri.hMonth)} ${hijri.hYear} هـ";
   }
 
-  static String formatDate(DateTime date) {
-    return DateFormat("dd/MM/yyyy").format(date);
-  }
-
-  static String formatGregorian(DateTime date) {
-    try {
-      return DateFormat("d MMMM yyyy", "ar").format(date);
-    } catch (_) {
-      return DateFormat("d MMMM yyyy").format(date);
+  static String getWeekdayName(DateTime date) {
+    switch (date.weekday) {
+      case DateTime.saturday:
+        return "السبت";
+      case DateTime.sunday:
+        return "الأحد";
+      case DateTime.monday:
+        return "الإثنين";
+      case DateTime.tuesday:
+        return "الثلاثاء";
+      case DateTime.wednesday:
+        return "الأربعاء";
+      case DateTime.thursday:
+        return "الخميس";
+      case DateTime.friday:
+        return "الجمعة";
+      default:
+        return "";
     }
+  }
+
+  static String _getHijriMonthName(int month) {
+    const months = [
+      "محرم",
+      "صفر",
+      "ربيع الأول",
+      "ربيع الآخر",
+      "جمادى الأولى",
+      "جمادى الآخرة",
+      "رجب",
+      "شعبان",
+      "رمضان",
+      "شوال",
+      "ذو القعدة",
+      "ذو الحجة",
+    ];
+    return months[month - 1];
   }
 }
