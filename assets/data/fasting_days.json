@@ -1,0 +1,20 @@
+[
+  {
+    "nameAr": "يوم الإثنين",
+    "hijriDate": "15 رجب 1446",
+    "gregorianDate": "2025-01-20",
+    "type": "recommended"
+  },
+  {
+    "nameAr": "يوم الخميس",
+    "hijriDate": "18 رجب 1446",
+    "gregorianDate": "2025-01-23",
+    "type": "recommended"
+  },
+  {
+    "nameAr": "يوم الجمعة",
+    "hijriDate": "19 رجب 1446",
+    "gregorianDate": "2025-01-24",
+    "type": "forbidden"
+  }
+]
