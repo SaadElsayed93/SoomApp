@@ -8,7 +8,7 @@ class DateHelper {
 
   static String formatHijri(DateTime date) {
     final hijri = HijriCalendar.fromDate(date);
-    return "${hijri.hDay} ${_getHijriMonthName(hijri.hMonth)} ${hijri.hYear} هـ";
+    return "${hijri.hDay} ${getHijriMonthName(hijri.hMonth)} ${hijri.hYear} هـ";
   }
 
   static String getWeekdayName(DateTime date) {
@@ -32,7 +32,7 @@ class DateHelper {
     }
   }
 
-  static String _getHijriMonthName(int month) {
+  static String getHijriMonthName(int month) {
     const months = [
       "محرم",
       "صفر",
