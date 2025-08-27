@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../models/fasting_day.dart';
-import '../core/theme/app_colors.dart';
 import '../core/theme/app_text_styles.dart';
 import '../screens/fasting_detail_screen.dart';
 import '../core/utils/date_helper.dart';
@@ -34,72 +33,73 @@ class FastingDayCard extends StatelessWidget {
     }
 
     final isToday = day.date.year == DateTime.now().year &&
-                    day.date.month == DateTime.now().month &&
-                    day.date.day == DateTime.now().day;
+        day.date.month == DateTime.now().month &&
+        day.date.day == DateTime.now().day;
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 3,
-      color: isToday ? Colors.blueGrey.shade50 : Colors.white, // يوم اليوم أفتح شوية
+      elevation: 1,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      color: isToday ? Colors.blueGrey.shade50 : Colors.white, // ✅ اليوم الحالي بلون فاتح
       child: InkWell(
+        borderRadius: BorderRadius.circular(16),
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => FastingDetailScreen(day: day)),
           );
         },
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    DateHelper.getWeekdayName(day.date),
-                    style: AppTextStyles.title,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    DateHelper.formatHijri(day.date),
-                    style: AppTextStyles.subtitle,
-                  ),
-                  Text(
-                    DateHelper.formatDate(day.date),
-                    style: AppTextStyles.subtitle,
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 4,
-                      horizontal: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      status,
-                      style: TextStyle(color: color, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              // ✅ أيقونة على الشمال
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.calendar_today, color: color),
               ),
-            ),
-            if (isToday)
-              Positioned(
-                top: 8,
-                right: 8,
-                child: Container(
-                  width: 10,
-                  height: 10,
-                  decoration: const BoxDecoration(
-                    color: Colors.green,
-                    shape: BoxShape.circle,
-                  ),
+              const SizedBox(width: 16),
+
+              // ✅ النصوص على اليمين
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "يوم ${DateHelper.getWeekdayName(day.date)}",
+                      style: AppTextStyles.title,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      DateHelper.formatHijri(day.date),
+                      style: AppTextStyles.subtitle,
+                    ),
+                    Text(
+                      DateHelper.formatDate(day.date),
+                      style: AppTextStyles.subtitle,
+                    ),
+                  ],
                 ),
               ),
-          ],
+
+              // ✅ الحالة (مستحب / واجب / منهي / عادي)
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  status,
+                  style: TextStyle(color: color, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

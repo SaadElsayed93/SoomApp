@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'screens/home_screen.dart';
+import 'package:fasting_reminder/screens/main_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,8 +15,12 @@ class FastingApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "تطبيق الصيام",
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const HomeScreen(),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        fontFamily: 'Cairo', // لو حابب الخط يكون عربي جميل
+      ),
+      home: const MainScreen(), // ✅ هنا خلي البداية على MainScreen
     );
   }
 }

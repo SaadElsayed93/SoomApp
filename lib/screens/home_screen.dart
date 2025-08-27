@@ -46,15 +46,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("أيام الصيام"),
+        title: const Text("أيام الصيام الخاصة"),
         backgroundColor: AppColors.primary,
         centerTitle: true,
+        elevation: 0,
       ),
       body: Column(
         children: [
+          const SizedBox(height: 12),
+          const Text(
+            "تعرف مواعيد الصيام المستحبة والممنوعة",
+            style: TextStyle(fontSize: 14, color: Colors.black54),
+          ),
+          const SizedBox(height: 12),
+
           Expanded(
             child: ListView.builder(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               itemCount: days.length,
               itemBuilder: (context, index) {
                 return FastingDayCard(day: days[index]);
@@ -62,11 +70,14 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // ✅ Week Navigator تحت اللي عدلناه
-          WeekNavigator(
-            onPrevious: _goToPreviousWeek,
-            onNext: _goToNextWeek,
-            onCurrent: _goToCurrentWeek,
+          // ✅ Week Navigator (السابق - الحالي - القادم)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: WeekNavigator(
+              onPrevious: _goToPreviousWeek,
+              onNext: _goToNextWeek,
+              onCurrent: _goToCurrentWeek,
+            ),
           ),
         ],
       ),
