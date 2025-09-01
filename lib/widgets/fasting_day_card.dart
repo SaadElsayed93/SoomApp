@@ -3,6 +3,7 @@ import '../models/fasting_day.dart';
 import '../core/theme/app_text_styles.dart';
 import '../screens/fasting_detail_screen.dart';
 import '../core/utils/date_helper.dart';
+import '../core/theme/app_colors.dart';
 
 class FastingDayCard extends StatelessWidget {
   final FastingDay day;
@@ -15,20 +16,20 @@ class FastingDayCard extends StatelessWidget {
     String status;
     switch (day.type) {
       case FastingType.recommended:
-        color = Colors.green;
+        color = AppColors.recommendedFasting;
         status = "مستحب";
         break;
       case FastingType.obligatory: // رمضان
-        color = const Color.fromARGB(255, 24, 83, 27);
+        color = AppColors.obligatoryFasting;
         status = "واجب صيامه";
         break;
       case FastingType.forbidden:
-        color = Colors.red;
+        color = AppColors.forbiddenFasting;
         status = "منهي";
         break;
       case FastingType.normal:
       default:
-        color = Colors.grey;
+        color = AppColors.normalDay;
         status = "عادي";
     }
 
@@ -40,7 +41,7 @@ class FastingDayCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 1,
       margin: const EdgeInsets.symmetric(vertical: 8),
-      color: isToday ? Colors.blueGrey.shade50 : Colors.white, // ✅ اليوم الحالي بلون فاتح
+      color: isToday ? AppColors.highlightDay : Colors.white, // ✅ اليوم الحالي بلون ثابت من الثيم
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () {

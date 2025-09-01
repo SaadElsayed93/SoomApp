@@ -21,25 +21,23 @@ class WeekNavigator extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // الأسبوع السابق
-          Expanded(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey.shade200,
-                foregroundColor: AppColors.textDark,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+          // زر السابق (سهم لليسار)
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.grey.shade200,
+              foregroundColor: AppColors.textDark,
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-              onPressed: onPrevious,
-              child: Text("الأسبوع السابق", style: AppTextStyles.body),
             ),
+            onPressed: onPrevious,
+            child: const Icon(Icons.arrow_back_ios, size: 20),
           ),
 
           const SizedBox(width: 8),
 
-          // الأسبوع الحالي
+          // الأسبوع الحالي (في النص)
           Expanded(
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -61,20 +59,18 @@ class WeekNavigator extends StatelessWidget {
 
           const SizedBox(width: 8),
 
-          // الأسبوع القادم
-          Expanded(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey.shade200,
-                foregroundColor: AppColors.textDark,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+          // زر القادم (سهم لليمين)
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.grey.shade200,
+              foregroundColor: AppColors.textDark,
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-              onPressed: onNext,
-              child: Text("الأسبوع القادم", style: AppTextStyles.body),
             ),
+            onPressed: onNext,
+            child: const Icon(Icons.arrow_forward_ios, size: 20),
           ),
         ],
       ),

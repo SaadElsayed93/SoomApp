@@ -56,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 12),
           const Text(
             "تعرف مواعيد الصيام المستحبة والممنوعة",
-            style: TextStyle(fontSize: 14, color: Colors.black54),
+            style: TextStyle(fontSize: 14, color: AppColors.textLight),
           ),
           const SizedBox(height: 12),
 

@@ -21,6 +21,7 @@ class _MainScreenState extends State<MainScreen> {
     StatsScreen(),
     SettingsScreen(),
   ];
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -42,7 +43,7 @@ class _MainScreenState extends State<MainScreen> {
           padding: EdgeInsets.zero,
           children: [
             const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.deepPurple),
+              decoration: BoxDecoration(color: AppColors.primary),
               child: Text(
                 "القائمة الرئيسية",
                 style: TextStyle(color: Colors.white, fontSize: 20),
@@ -91,7 +92,7 @@ class _MainScreenState extends State<MainScreen> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         selectedItemColor: AppColors.primary,
-        unselectedItemColor: Colors.grey,
+        unselectedItemColor: AppColors.textDark.withOpacity(0.6),
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
         items: const [

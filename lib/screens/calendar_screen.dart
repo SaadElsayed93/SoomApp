@@ -2,21 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hijri/hijri_calendar.dart';
 import '../services/fasting_day_service.dart';
 import '../models/fasting_day.dart';
-
-const Map<int, String> hijriMonthsArabic = {
-  1: "محرم",
-  2: "صفر",
-  3: "ربيع الأول",
-  4: "ربيع الآخر",
-  5: "جمادى الأولى",
-  6: "جمادى الآخرة",
-  7: "رجب",
-  8: "شعبان",
-  9: "رمضان",
-  10: "شوال",
-  11: "ذو القعدة",
-  12: "ذو الحجة",
-};
+import '../core/utils/date_helper.dart';
+import '../core/theme/app_colors.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -39,13 +26,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void _nextMonth() {
     setState(() {
       if (_currentHijriMonth.hMonth == 12) {
-        _currentHijriMonth = HijriCalendar()
+        _currentHijriMonth
           ..hYear = _currentHijriMonth.hYear + 1
           ..hMonth = 1
           ..hDay = 1;
       } else {
-        _currentHijriMonth = HijriCalendar()
-          ..hYear = _currentHijriMonth.hYear
+        _currentHijriMonth
           ..hMonth = _currentHijriMonth.hMonth + 1
           ..hDay = 1;
       }
@@ -55,13 +41,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void _prevMonth() {
     setState(() {
       if (_currentHijriMonth.hMonth == 1) {
-        _currentHijriMonth = HijriCalendar()
+        _currentHijriMonth
           ..hYear = _currentHijriMonth.hYear - 1
           ..hMonth = 12
           ..hDay = 1;
       } else {
-        _currentHijriMonth = HijriCalendar()
-          ..hYear = _currentHijriMonth.hYear
+        _currentHijriMonth
           ..hMonth = _currentHijriMonth.hMonth - 1
           ..hDay = 1;
       }
@@ -75,10 +60,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
       _currentHijriMonth.hMonth,
     );
 
+    // عشان نعرف في أي يوم يبدأ الشهر
     final firstDayHijri = HijriCalendar()
       ..hYear = _currentHijriMonth.hYear
       ..hMonth = _currentHijriMonth.hMonth
       ..hDay = 1;
+
     final firstDayGregorian = firstDayHijri.hijriToGregorian(
       firstDayHijri.hYear,
       firstDayHijri.hMonth,
@@ -88,36 +75,38 @@ class _CalendarScreenState extends State<CalendarScreen> {
     final startWeekday = firstDayGregorian.weekday % 7; // السبت = 0
 
     return Scaffold(
-      appBar: AppBar(title: const Text("التقويم الهجري"), centerTitle: true),
+      appBar: AppBar(
+        title: const Text("📅 التقويم الهجري"),
+        centerTitle: true,
+        backgroundColor: AppColors.primary,
+      ),
       body: Column(
         children: [
           // 🔹 الهيدر
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                onPressed: _prevMonth,
-                icon: const Icon(Icons.arrow_back),
-              ),
-              Text(
-                "${hijriMonthsArabic[_currentHijriMonth.hMonth]} ${_currentHijriMonth.hYear}",
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  onPressed: _prevMonth,
+                  icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
                 ),
-              ),
-              IconButton(
-                onPressed: _nextMonth,
-                icon: const Icon(Icons.arrow_forward),
-              ),
-            ],
+                Text(
+                  "${DateHelper.getHijriMonthName(_currentHijriMonth.hMonth)} ${_currentHijriMonth.hYear}",
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                IconButton(
+                  onPressed: _nextMonth,
+                  icon: const Icon(Icons.arrow_forward, color: AppColors.textDark),
+                ),
+              ],
+            ),
           ),
-
-          const SizedBox(height: 10),
 
           // 🔹 أسماء الأيام
           Container(
-            color: Colors.grey.shade200,
+            color: AppColors.normalDay,
             padding: const EdgeInsets.symmetric(vertical: 6),
             child: Row(
               children: const [
@@ -138,12 +127,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
           Expanded(
             child: GridView.builder(
               itemCount: days.length + startWeekday,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 7,
-              ),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
               itemBuilder: (context, index) {
                 if (index < startWeekday) {
-                  return const SizedBox();
+                  return const SizedBox(); // فراغ قبل أول يوم
                 }
 
                 final day = days[index - startWeekday];
@@ -165,16 +152,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          "${hijri.hDay}",
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                        Text("${hijri.hDay}", style: const TextStyle(fontWeight: FontWeight.bold)),
                         Text(
                           "${day.date.day}/${day.date.month}",
-                          style: const TextStyle(
-                            fontSize: 10,
-                            color: Colors.black54,
-                          ),
+                          style: const TextStyle(fontSize: 10, color: Colors.black54),
                         ),
                       ],
                     ),
@@ -188,7 +169,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  /// 🎨 تحديد اللون المناسب
+  /// 🎨 اللون حسب النوع (مع تخفيف الأيام الماضية)
   Color _getDayColor(FastingDay day) {
     final today = DateTime.now();
     final isPast = day.date.isBefore(DateTime(today.year, today.month, today.day));
@@ -196,21 +177,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
     Color base;
     switch (day.type) {
       case FastingType.obligatory:
-        base = Colors.green.shade300;
+        base = AppColors.obligatoryFasting;
         break;
       case FastingType.recommended:
-        base = Colors.blue.shade300;
+        base = AppColors.recommendedFasting;
         break;
       case FastingType.forbidden:
-        base = Colors.red.shade300;
+        base = AppColors.forbiddenFasting;
         break;
       case FastingType.normal:
       default:
-        base = Colors.grey.shade200;
+        base = AppColors.normalDay;
         break;
     }
 
-    return isPast ? base.withOpacity(0.4) : base; // 👈 لو اليوم فات يبقى اللون أفتح
+    return isPast ? base.withOpacity(0.4) : base;
   }
 
   /// 🔹 BottomSheet تفاصيل اليوم
@@ -218,13 +199,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
     String typeText;
     switch (day.type) {
       case FastingType.obligatory:
-        typeText = "صوم واجب";
+        typeText = "📌 صوم واجب";
         break;
       case FastingType.recommended:
-        typeText = "صوم مستحب";
+        typeText = "🌿 صوم مستحب";
         break;
       case FastingType.forbidden:
-        typeText = "صوم ممنوع";
+        typeText = "🚫 صوم ممنوع";
         break;
       case FastingType.normal:
       default:
@@ -243,7 +224,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "اليوم ${hijri.hDay} ${hijriMonthsArabic[hijri.hMonth]} ${hijri.hYear} هـ",
+              "اليوم ${hijri.hDay} ${DateHelper.getHijriMonthName(hijri.hMonth)} ${hijri.hYear} هـ",
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
@@ -251,13 +232,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
             const SizedBox(height: 10),
             Text("📌 النوع: $typeText", style: const TextStyle(fontSize: 16)),
             const SizedBox(height: 15),
-            const Text(
-              "📖 حديث أو فائدة عن الصيام يوضع هنا ...",
-              style: TextStyle(fontSize: 13, color: Colors.black54),
-              textAlign: TextAlign.center,
-            ),
+            Text(day.note ?? "لا يوجد ملاحظة", style: const TextStyle(fontSize: 13, color: Colors.black54)),
             const SizedBox(height: 20),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
               onPressed: () => Navigator.pop(context),
               child: const Text("إغلاق"),
             )
