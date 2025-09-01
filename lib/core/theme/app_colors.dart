@@ -5,7 +5,8 @@ class AppColors {
   static const primary = Color.fromARGB(255, 135, 154, 230);
   static const textDark = Color(0xFF333333);
   static const textLight = Color(0xFF757575);
-
+ 
+ 
   // 🎨 ألوان الصيام
   static const obligatoryFasting = Color(0xFF4CAF50);
   static const recommendedFasting = Color(0xFF2196F3);
